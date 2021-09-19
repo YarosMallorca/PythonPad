@@ -31,7 +31,7 @@ def scan_launchpads():
 
         else:
             pass
-    pygame.midi.quit()
+    #pygame.midi.quit()
     return inputs, outputs
 
 
@@ -40,8 +40,8 @@ def connect(connecttype, input_ch=0, output_ch=0):
     global output_device
 
     if connecttype == "manual":
-        input_device = pygame.midi.Input(scan_launchpads()[0][input_ch][1])
-        output_device = pygame.midi.Output(scan_launchpads()[1][output_ch][1])
+        input_device = pygame.midi.Input(input_ch)
+        output_device = pygame.midi.Output(output_ch)
 
     else:
         input_device = pygame.midi.Input(scan_launchpads()[0][0][1])
@@ -57,3 +57,10 @@ def detect_press():
 
     except:
         raise IndexError("Device not detected or not connected properly. Use pythonpad.connect() first")
+
+connect("auto")
+
+while True:
+    buttons = detect_press()
+    if buttons != None:
+        print(buttons)
