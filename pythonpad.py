@@ -57,10 +57,3 @@ def detect_press():
 
     except:
         raise IndexError("Device not detected or not connected properly. Use pythonpad.connect() first")
-
-connect("auto")
-
-while True:
-    buttons = detect_press()
-    if buttons != None:
-        print(buttons)
