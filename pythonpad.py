@@ -3,26 +3,22 @@ import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import pygame.midi
-from pygame.locals import *
-from win32 import *
 
 pygame.init()
-pygame.fastevent.init()
-event_get = pygame.fastevent.get
-event_post = pygame.fastevent.post
 
 pygame.midi.init()
 
+on_leds = []
+
 
 def scan_launchpads():
-    pygame.midi.init()
     inputs = []
     outputs = []
     for i in range(pygame.midi.get_count()):
         r = pygame.midi.get_device_info(i)
         (interf, name, input, output, opened) = r
+                
         if "Launchpad" in str(name):
-
             if input:
                 inputs.append([str(name)[2:][:-1], i])
 
@@ -31,7 +27,7 @@ def scan_launchpads():
 
         else:
             pass
-    #pygame.midi.quit()
+        
     return inputs, outputs
 
 
@@ -58,9 +54,14 @@ def detect_press():
     except:
         raise IndexError("Device not detected or not connected properly. Use pythonpad.connect() first")
 
-connect("auto")
 
-while True:
-    buttons = detect_press()
-    if buttons != None:
-        print(buttons)
+def light_on(button, channel, color):
+    output_device.note_on(button, color, channel - 1)
+    on_leds.append(button)
+
+
+def light_off(button, channel):
+    if button in on_leds:
+        output_device.note_off(button, 0, channel - 1)
+        while button in on_leds:
+            on_leds.remove(button)
